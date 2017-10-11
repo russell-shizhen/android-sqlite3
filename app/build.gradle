@@ -1,0 +1,108 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "android.sqlite3"
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+                arguments "-GAndroid Gradle - Ninja"
+                targets 'sqlite3', "sqlite3-shared"
+            }
+        }
+        ndk {
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+    buildTypes {
+        debug {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DDEBUG=1"
+                }
+            }
+        }
+        release {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DDEBUG=0"
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        debug {
+            jniLibs.srcDirs += ["$rootDir/sqlite3-libs/debug"]
+        }
+        release {
+            jniLibs.srcDirs += ["$rootDir/sqlite3-libs/release"]
+        }
+    }
+}
+
+project.afterEvaluate {
+    clean.doFirst {
+        delete "${projectDir}/.externalNativeBuild/"
+        delete "${rootDir}/sqlite3-libs"
+    }
+
+    task buildSqlite {
+        group "sqlite"
+
+        dependsOn assembleDebug
+        dependsOn assembleRelease
+    }
+
+    task dist {
+        group "sqlite"
+        description "copy the .so files from apk (debug symbols already stripped) and the header file"
+
+        dependsOn buildSqlite
+    } doLast {
+        // Copy .so files from apk
+        copy {
+            from zipTree("$buildDir/outputs/apk/app-debug.apk")
+            into "$buildDir/intermediates/sharedLibs/debug"
+        }
+
+        copy {
+            from "$buildDir/intermediates/sharedLibs/debug/lib"
+            into "$rootDir/sqlite3-libs/debug/libs"
+        }
+
+        copy {
+            from zipTree("$buildDir/outputs/apk/app-release-unsigned.apk")
+            into "$buildDir/intermediates/sharedLibs/release"
+        }
+        copy {
+            from "$buildDir/intermediates/sharedLibs/release/lib"
+            into "$rootDir/sqlite3-libs/release/libs"
+        }
+
+        // Copy header file
+        copy {
+            from ("$rootDir/../orgin/sqlite-amalgamation-3200100/") {
+                include "sqlite3.h"
+            }
+            into "$rootDir/sqlite3-libs/debug/include"
+        }
+        copy {
+            from ("$rootDir/../orgin/sqlite-amalgamation-3200100/") {
+                include "sqlite3.h"
+            }
+            into "$rootDir/sqlite3-libs/release/include"
+        }
+    }
+}
