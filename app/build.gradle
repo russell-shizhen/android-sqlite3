@@ -73,7 +73,7 @@ project.afterEvaluate {
     } doLast {
         // Copy .so files from apk
         copy {
-            from zipTree("$buildDir/outputs/apk/app-debug.apk")
+            from zipTree("$buildDir/outputs/apk/debug/app-debug.apk")
             into "$buildDir/intermediates/sharedLibs/debug"
         }
 
@@ -83,26 +83,12 @@ project.afterEvaluate {
         }
 
         copy {
-            from zipTree("$buildDir/outputs/apk/app-release-unsigned.apk")
+            from zipTree("$buildDir/outputs/apk/release/app-release-unsigned.apk")
             into "$buildDir/intermediates/sharedLibs/release"
         }
         copy {
             from "$buildDir/intermediates/sharedLibs/release/lib"
             into "$rootDir/sqlite3-libs/release/libs"
-        }
-
-        // Copy header file
-        copy {
-            from ("$rootDir/../orgin/sqlite-amalgamation-3200100/") {
-                include "sqlite3.h"
-            }
-            into "$rootDir/sqlite3-libs/debug/include"
-        }
-        copy {
-            from ("$rootDir/../orgin/sqlite-amalgamation-3200100/") {
-                include "sqlite3.h"
-            }
-            into "$rootDir/sqlite3-libs/release/include"
         }
     }
 }
