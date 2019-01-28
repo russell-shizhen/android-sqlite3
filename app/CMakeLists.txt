@@ -72,3 +72,5 @@ set(SQLITE_DIST_DIR ${SQLITE_LIBS_DIR}/${COMPILE_MODE})
 set_target_properties(${LIB_STATIC}
                       PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${SQLITE_DIST_DIR}/libs/${ANDROID_ABI}")
 
+set_target_properties(${LIB_STATIC}
+                      PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${SQLITE_DIST_DIR}/libs/${ANDROID_ABI}")
