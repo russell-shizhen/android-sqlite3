@@ -4,9 +4,9 @@ An Android project building SQLite3 c source code into static and shared librari
 This project will build sqlite3 for all Android ABIs **except** mips and mips64
 
 ### Build Environment ###
-* Android Studio: 2.3.3
+* Android Studio: 3.2.1
 * NDK: android-ndk-r15c
-* Gradle wrapper: 3.3
+* Gradle wrapper: 4.6
 
 ### Setup ### 
 Home dir of Android NDK and SDK dir need to be set as below in the *local.properties* file

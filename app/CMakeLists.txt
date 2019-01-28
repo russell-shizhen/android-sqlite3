@@ -71,6 +71,10 @@ set(SQLITE_DIST_DIR ${SQLITE_LIBS_DIR}/${COMPILE_MODE})
 # ridirect the static lib binary to dist directory
 set_target_properties(${LIB_STATIC}
                       PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${SQLITE_DIST_DIR}/libs/${ANDROID_ABI}")
-
-set_target_properties(${LIB_STATIC}
+# ridirect the shared lib binary to dist directory
+set_target_properties(${LIB_SHARED}
                       PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${SQLITE_DIST_DIR}/libs/${ANDROID_ABI}")
+
+if(NOT EXISTS "${SQLITE_DIST_DIR}/include/sqlite3.h")
+    file(COPY ${SQLITE_SOURCE_DIR}/sqlite3.h DESTINATION "${SQLITE_DIST_DIR}/include")
+endif()
